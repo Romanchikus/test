@@ -10,7 +10,8 @@ import traceback
 # import nltk
 # nltk.edit_distance("humpty", "dumpty")
 import dialogflow_v2 as dialogflow
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/home/roma/speech/small-talk-8f559-055dcd826823.json"
+f="/home/roma/speech/Small-Talk-769554f11f51.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]=f
 project_id = 'small-talk-8f559'
 session_id = "BatlabAIBot"
 language_code = 'ru'
@@ -18,50 +19,20 @@ send=True
 name=""
 what_ask = ""
 fulf = ""
-def detect_intent_texts(project_id, session_id, texts, language_code):
-    session_client = dialogflow.SessionsClient()
-    
-    session = session_client.session_path(project_id, session_id)
-    text_input = dialogflow.types.TextInput(
-        text=texts, language_code=language_code)
-
-    query_input = dialogflow.types.QueryInput(text=text_input)
-
-    response = session_client.detect_intent(
-        session=session, query_input=query_input)
-
-    # print('=' * 20)
-
-    if response.query_result.fulfillment_text:
-        print('Fulfillment text: {}\n'.format(
-            response.query_result.fulfillment_text))
-
-    
-    try:
-        # print(response.query_result.parameters.fields["lastName"].string_value)
-        # print(response.query_result.parameters.fields["firstName"].string_value)
-        return response
-    except Exception as err:
-        print('Ошибка:\n', traceback.format_exc())  
 
 def truemess(update):
     global send
     global name
     global what_ask
     global fulf
-    upd=[str(update)]
-    create_entity_type(project_id, "@test", 1)
-    print("create_entity_type++++++++++++++++++++++++")
-    # create_entity(project_id, "firstName", update, upd)
-    create_entity(project_id, "@firstName", update, upd)
-    
     if send == True and what_ask == update and fulf == "Повторіть ім'я":
         send = False
         name = update
         return str("Такого імені немає, додати "+update+"?")
     if send == False and update.lower() == "так":
         send = True
-        create_entity(project_id, "firstName", name, name)
+        upd=[name]
+        create_entity(project_id, "2e0391b0-0acc-4667-b9a9-a805d942ae80", name, upd)
         return str("Збережено")
     what_ask = update
     print("+="*10)
@@ -100,6 +71,62 @@ def trans(city,lan):
     print(u'Translation: {}'.format(translation['translatedText']))
     return translation['translatedText']
 
+
+def create_entity_type(project_id, display_name, kind):
+    """Create an entity type with the given display name."""
+    import dialogflow_v2 as dialogflow
+    entity_types_client = dialogflow.EntityTypesClient()
+
+    parent = entity_types_client.project_agent_path(project_id)
+    entity_type = dialogflow.types.EntityType(
+        display_name=display_name, kind=kind)
+
+    response = entity_types_client.create_entity_type(parent, entity_type)
+
+    print('Entity type created: \n{}'.format(response))
+
+def list_intents(project_id):
+    import dialogflow_v2 as dialogflow
+    intents_client = dialogflow.IntentsClient()
+
+    parent = intents_client.project_agent_path(project_id)
+
+    intents = intents_client.list_intents(parent)
+
+    for intent in intents:
+        print('=' * 20)
+        print('Intent name: {}'.format(intent.name))
+        print('Intent display_name: {}'.format(intent.display_name))
+        print('Action: {}\n'.format(intent.action))
+        print('Root followup intent: {}'.format(
+            intent.root_followup_intent_name))
+        print('Parent followup intent: {}\n'.format(
+            intent.parent_followup_intent_name))
+
+        print('Input contexts:')
+        for input_context_name in intent.input_context_names:
+            print('\tName: {}'.format(input_context_name))
+
+        print('Output contexts:')
+        for output_context in intent.output_contexts:
+            print('\tName: {}'.format(output_context.name))
+
+# list_entities(project_id)
+def list_entities(project_id):
+    client = dialogflow.EntityTypesClient()
+    parent = client.project_agent_path(project_id)
+    # Iterate over all results
+    for element in client.list_entity_types(parent):
+        # process element
+        print(element)
+    # Alternatively:
+    # Iterate over results one page at a time
+    # for page in client.list_entity_types(parent).pages:
+    #     for element in page:
+    #         # process element
+    #         print(element)
+
+# list_intents(project_id)
 def create_entity(project_id, entity_type_id, entity_value, synonyms):
     """Create an entity of the given entity type."""
     entity_types_client = dialogflow.EntityTypesClient()
@@ -120,16 +147,28 @@ def create_entity(project_id, entity_type_id, entity_value, synonyms):
 
     print('Entity created: {}'.format(response))
 
-def create_entity_type(project_id, display_name, kind):
-    """Create an entity type with the given display name."""
-    import dialogflow_v2 as dialogflow
-    entity_types_client = dialogflow.EntityTypesClient()
+def detect_intent_texts(project_id, session_id, texts, language_code):
+    session_client = dialogflow.SessionsClient()
+    
+    session = session_client.session_path(project_id, session_id)
+    text_input = dialogflow.types.TextInput(
+        text=texts, language_code=language_code)
 
-    parent = entity_types_client.project_agent_path(project_id)
-    entity_type = dialogflow.types.EntityType(
-        display_name=display_name, kind=kind)
+    query_input = dialogflow.types.QueryInput(text=text_input)
 
-    response = entity_types_client.create_entity_type(parent, entity_type)
+    response = session_client.detect_intent(
+        session=session, query_input=query_input)
 
-    print('Entity type created: \n{}'.format(response))
+    # print('=' * 20)
 
+    if response.query_result.fulfillment_text:
+        print('Fulfillment text: {}\n'.format(
+            response.query_result.fulfillment_text))
+
+    
+    try:
+        # print(response.query_result.parameters.fields["lastName"].string_value)
+        # print(response.query_result.parameters.fields["firstName"].string_value)
+        return response
+    except Exception as err:
+        print('Ошибка:\n', traceback.format_exc())  
