@@ -1,3 +1,66 @@
+response_id: "eb2bff22-33e6-49ec-867b-c0fb59be88e6-baaf0c1f"
+query_result {
+  query_text: "\321\207\321\202\320\276 \321\202\320\260\320\272\320\276\320\265 \320\267\320\265\320\274\320\273\321\217"
+  parameters {
+    fields {
+      key: "Do_it"
+      value {
+        string_value: ""
+      }
+    }
+    fields {
+      key: "Some"
+      value {
+        list_value {
+          values {
+            string_value: "\320\247\321\202\320\276 \321\202\320\260\320\272\320\276\320\265"
+          }
+        }
+      }
+    }
+    fields {
+      key: "any"
+      value {
+        string_value: "\320\267\320\265\320\274\320\273\321\217"
+      }
+    }
+    fields {
+      key: "firstName"
+      value {
+      }
+    }
+    fields {
+      key: "lastName"
+      value {
+      }
+    }
+  }
+  all_required_params_present: true
+  fulfillment_text: "About"
+  fulfillment_messages {
+    text {
+      text: "About"
+    }
+  }
+  intent {
+    name: "projects/small-talk-8f559/agent/intents/2422087a-0ca1-49fc-ab3e-e30a8a8d55e4"
+    display_name: "About"
+  }
+  intent_detection_confidence: 0.6666666269302368
+  diagnostic_info {
+    fields {
+      key: "end_conversation"
+      value {
+        bool_value: true
+      }
+    }
+  }
+  language_code: "ru"
+}
+
+
+
+
 Query text: Сагайдачный
 Detected intent: query_text: "\320\241\320\260\320\263\320\260\320\271\320\264\320\260\321\207\320\275\321\213\320\271"
 parameters {

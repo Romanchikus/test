@@ -10,93 +10,78 @@ import traceback
 # import nltk
 # nltk.edit_distance("humpty", "dumpty")
 import dialogflow_v2 as dialogflow
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/home/roma/speech/small-talk-8f559-d0fe6cb9de3b.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/home/roma/speech/small-talk-8f559-055dcd826823.json"
 project_id = 'small-talk-8f559'
 session_id = "BatlabAIBot"
 language_code = 'ru'
-
+send=True
+name=""
+what_ask = ""
+fulf = ""
 def detect_intent_texts(project_id, session_id, texts, language_code):
     session_client = dialogflow.SessionsClient()
     
     session = session_client.session_path(project_id, session_id)
-    print('Session path: {}\n'.format(session))
-    texts=["Пусть вика сагайдачный уберёт в комнате завтра", "вика", "сагайдачный"]   
-    for text in texts:
-        text_input = dialogflow.types.TextInput(
-            text=text, language_code=language_code)
+    text_input = dialogflow.types.TextInput(
+        text=texts, language_code=language_code)
 
-        query_input = dialogflow.types.QueryInput(text=text_input)
+    query_input = dialogflow.types.QueryInput(text=text_input)
 
-        response = session_client.detect_intent(
-            session=session, query_input=query_input)
+    response = session_client.detect_intent(
+        session=session, query_input=query_input)
 
-        print('=' * 20)
-        print('Query text: {}'.format(response.query_result.query_text))
-        # print('Detected intent: {} (confidence: {})\n'.format(
-        #     response.query_result.intent_detection_confidence,
-        #     response.query_result.intent_detection_confidence))
-        if response.query_result.fulfillment_text:
-            print('Fulfillment text: {}\n'.format(
-                type(response.query_result.fulfillment_text)))
-        # if response.query_result.parameters.fields["lastName"]:
+    # print('=' * 20)
+
+    if response.query_result.fulfillment_text:
+        print('Fulfillment text: {}\n'.format(
+            response.query_result.fulfillment_text))
+
     
     try:
-        lastName=response.query_result.parameters.fields["lastName"].string_value
-        print(lastName)
+        # print(response.query_result.parameters.fields["lastName"].string_value)
+        # print(response.query_result.parameters.fields["firstName"].string_value)
+        return response
     except Exception as err:
         print('Ошибка:\n', traceback.format_exc())  
-    
-    return str(response.query_result.fulfillment_text)
 
-send=True
-weathercity = "Kiev"
-country="00"
-tree = ET.parse('/home/roma/speech/set.xml')
-root = tree.getroot()
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/home/roma/speech/speechtotext-2bc1c0b4dc68.json"
 def truemess(update):
-    global country
     global send
-    texts= update
-    language_code = 'ru'
-    response = detect_intent_texts(project_id, session_id, texts, language_code)# Разбираем JSON и вытаскиваем ответ
-    stry=response.query_result.fulfillment_text
-    boo=response.query_result.diagnostic_info.fields["end_conversation"].bool_value
-    firstName=response.query_result.parameters.fields["firstName"].string_value
-    lastName=response.query_result.parameters.fields["lastName"].string_value
-    fulf=response.query_result.fulfillment_text
-
-    # if response== "Повторите имя":
-        # request = apiai.ApiAI('f1470498e503467fa0199d2af6052762').text_request() # Токен API к Dialogflow
-        # request.lang = 'ru' # На каком языке будет послан запрос
-        # request.session_id = 'BatlabAIBot' # ID Сессии диалога (нужно, чтобы потом учить бота)
-        # request.query = 'Рома' # Посылаем запрос к ИИ с сообщением от юзера
-        # responseJson = json.loads(request.getresponse().read().decode('utf-8'))
-        # response = responseJson['result']['fulfillment']['speech']
-        # return response
-
-    if fulf== "About":
-        print(city)
-        text = trans(city,"en")
-        text = TextBlob(text)
-        for words, tag in text.tags:
-            if tag == "NN":
-                print(words)
-                synset=wordnet.synsets(words)
-                tran=trans(synset[0].definition(),"ru")
-                return str(tran)
-                send = False
-            else:
-                send = True
-
-    elif fulf:
-        if send==True:
-            return str(fulf)
-
-    else:
-        if send==True:
-            return str("result")
-    send = True
+    global name
+    global what_ask
+    global fulf
+    upd=[str(update)]
+    create_entity_type(project_id, "@test", 1)
+    print("create_entity_type++++++++++++++++++++++++")
+    # create_entity(project_id, "firstName", update, upd)
+    create_entity(project_id, "@firstName", update, upd)
+    
+    if send == True and what_ask == update and fulf == "Повторіть ім'я":
+        send = False
+        name = update
+        return str("Такого імені немає, додати "+update+"?")
+    if send == False and update.lower() == "так":
+        send = True
+        create_entity(project_id, "firstName", name, name)
+        return str("Збережено")
+    what_ask = update
+    print("+="*10)
+    
+    if send:
+        response = detect_intent_texts(project_id, session_id, update, 'ru')# Разбираем JSON и вытаскиваем ответ
+        # print(response)
+        boo=response.query_result.diagnostic_info.fields["end_conversation"].bool_value
+        firstName=response.query_result.parameters.fields["firstName"].string_value
+        lastName=response.query_result.parameters.fields["lastName"].string_value
+        fulf=response.query_result.fulfillment_text
+        query_text = response.query_result.query_text
+        
+        if fulf:
+            if send==True:
+                return str(fulf)
+        else:
+            if send==True:
+                return str("result")
+        
 
 def trans(city,lan):
 
@@ -134,3 +119,17 @@ def create_entity(project_id, entity_type_id, entity_value, synonyms):
         entity_type_path, [entity])
 
     print('Entity created: {}'.format(response))
+
+def create_entity_type(project_id, display_name, kind):
+    """Create an entity type with the given display name."""
+    import dialogflow_v2 as dialogflow
+    entity_types_client = dialogflow.EntityTypesClient()
+
+    parent = entity_types_client.project_agent_path(project_id)
+    entity_type = dialogflow.types.EntityType(
+        display_name=display_name, kind=kind)
+
+    response = entity_types_client.create_entity_type(parent, entity_type)
+
+    print('Entity type created: \n{}'.format(response))
+

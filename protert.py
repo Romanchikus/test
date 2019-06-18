@@ -5,16 +5,13 @@ import os
 import xml.etree.ElementTree as ET
 from textblob import TextBlob
 import nltk
-from itertools import chain
 from nltk.corpus import wordnet
 import io
 from gtts import gTTS
-import pydub
 from google.cloud.speech import types
 from google.cloud import speech , translate
 from google.cloud.speech import enums
 from pydub import AudioSegment
-from pydub.playback import play
 # nltk.download('averaged_perceptron_tagger')
 send=True
 weathercity = "Kiev"
@@ -93,12 +90,6 @@ def textMessage(bot, update):
             bot.send_message(chat_id=update.message.chat_id, text='Я Вас не совсем понял!')
     send = True
 
-def Dialog(text):
-    request = apiai.ApiAI('f1470498e503467fa0199d2af6052762').text_request() # Токен API к Dialogflow
-    request.lang = 'ru' # На каком языке будет послан запрос
-    request.session_id = 'BatlabAIBot' # ID Сессии диалога (нужно, чтобы потом учить бота)
-    request.query = text # Посылаем запрос к ИИ с сообщением от юзера
-    return request.query
 
 def voice_handler(bot, update):
     global send     
@@ -116,6 +107,7 @@ def voice_handler(bot, update):
         response = responseJson['result']['fulfillment']['speech']
         city = responseJson['result']['resolvedQuery']
         result=responseJson['result']
+        print(response)
     else:   
         try:
             send=False
@@ -128,9 +120,7 @@ def voice_handler(bot, update):
             bot.send_message(chat_id=update.message.chat_id, text="Помилка правопису")
         send=False
 
-    if response == "taxi":
-        bot.send_message(chat_id=update.message.chat_id, text=(city,result))
-        send = False
+
 
     if response== "About":
         print(city)
@@ -163,7 +153,7 @@ def voice_handler(bot, update):
         country= ua(country)
         bot.send_message(chat_id=update.message.chat_id, text="Скажіть назву міста!")
         send = False
-
+    
     if response:
         if send ==True:
             blabla=trans(response,"uk")
