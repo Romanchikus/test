@@ -7,6 +7,8 @@ from google.cloud.speech import types
 from google.cloud import speech , translate
 from google.cloud.speech import enums
 import traceback
+from time import sleep
+
 # import nltk
 # nltk.edit_distance("humpty", "dumpty")
 import dialogflow_v2 as dialogflow
@@ -19,40 +21,42 @@ send=True
 name=""
 what_ask = ""
 fulf = ""
-
 def truemess(update):
     global send
     global name
     global what_ask
     global fulf
-    if send == True and what_ask == update and fulf == "Повторіть ім'я":
+    
+    
+    if send:
+        fulf = dialog(project_id, session_id, update)
+    
+        
+    if send == True and what_ask == "Повторіть ім'я" and fulf == "Повторіть ім'я":
         send = False
         name = update
         return str("Такого імені немає, додати "+update+"?")
-    if send == False and update.lower() == "так":
+    if what_ask == "Повторіть ім'я" and update.lower() == "так":
         send = True
         upd=[name]
         create_entity(project_id, "2e0391b0-0acc-4667-b9a9-a805d942ae80", name, upd)
-        return str("Збережено")
-    what_ask = update
-    print("+="*10)
-    
-    if send:
-        response = detect_intent_texts(project_id, session_id, update, 'ru')# Разбираем JSON и вытаскиваем ответ
-        # print(response)
-        boo=response.query_result.diagnostic_info.fields["end_conversation"].bool_value
-        firstName=response.query_result.parameters.fields["firstName"].string_value
-        lastName=response.query_result.parameters.fields["lastName"].string_value
-        fulf=response.query_result.fulfillment_text
-        query_text = response.query_result.query_text
-        
-        if fulf:
-            if send==True:
-                return str(fulf)
-        else:
-            if send==True:
-                return str("result")
-        
+        sleep(3.55)
+        fulf = dialog(project_id, session_id, name)
+        return str("Збережено ім'я \n"+fulf)
+    if send == False and what_ask == "Повторіть ім'я":
+        send = True
+        fulf = dialog(project_id, session_id, update)
+        return str("Не збережено ім'я\n"+fulf)
+
+    what_ask = fulf
+    if fulf:
+        if send==True:
+            return fulf
+    else:
+        if send==True:
+            return str("result")
+    # print("+="*10)
+             
 
 def trans(city,lan):
 
@@ -146,6 +150,16 @@ def create_entity(project_id, entity_type_id, entity_value, synonyms):
         entity_type_path, [entity])
 
     print('Entity created: {}'.format(response))
+
+def dialog(project_id, session_id, update):
+    response = detect_intent_texts(project_id, session_id, update, 'ru')# Разбираем JSON и вытаскиваем ответ
+    # print(response)
+    # boo=response.query_result.diagnostic_info.fields["end_conversation"].bool_value
+    # firstName=response.query_result.parameters.fields["firstName"].string_value
+    # lastName=response.query_result.parameters.fields["lastName"].string_value
+    fulf=response.query_result.fulfillment_text
+    # query_text = response.query_result.query_text
+    return fulf
 
 def detect_intent_texts(project_id, session_id, texts, language_code):
     session_client = dialogflow.SessionsClient()

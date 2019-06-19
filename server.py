@@ -3,9 +3,13 @@ import socket
 import json
 import urllib.request
 import re
+import sys
 from servrom import truemess
 import traceback
-port=10012
+from _thread import *
+import threading
+
+port=10013
 ##sdf
 def send_answer(conn, data="32423"):
     # conn.send(data.encode("utf-8"))
@@ -46,23 +50,24 @@ def parse(conn, addr):# обработка соединения в отдель�
             send_answer(conn, data=datas)
         except:
             pass
+    conn.close()
             
+def Main(): 
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind( ("localhost", port) )
+    print("socket binded to post", port) 
+    sock.listen(1)
+    try:
+        while 1: # работаем постоянно
+            conn, addr = sock.accept()
+            conn.settimeout(60.0) 
+            print("New connection from " + addr[0])
+            try:
+                start_new_thread(parse, (conn,addr,))
+            except Exception as err:
+                print('Ошибка:\n', traceback.format_exc())
+            #     conn.close()
+    finally: sock.close()
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.bind( ("localhost", port) )
-sock.listen(1)
-sock.settimeout(60.0)
-try:
-    while 1: # работаем постоянно
-        conn, addr = sock.accept()
-        conn.settimeout(60.0) 
-        print("New connection from " + addr[0])
-        try:
-            parse(conn, addr)
-        except Exception as err:
-            print('Ошибка:\n', traceback.format_exc())
-            # print('Connect dis')
-            # send_answer(conn, data="Ошибка")
-        # finally:
-        #     conn.close()
-finally: sock.close()
+if __name__ == '__main__': 
+    Main() 
