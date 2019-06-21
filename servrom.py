@@ -21,17 +21,17 @@ send=True
 name=""
 what_ask = ""
 fulf = ""
+surname =""
 def truemess(update):
     global send
     global name
     global what_ask
     global fulf
-    
+    global surname
     
     if send:
         fulf = dialog(project_id, session_id, update)
-    
-        
+
     if send == True and what_ask == "Повторіть ім'я" and fulf == "Повторіть ім'я":
         send = False
         name = update
@@ -40,13 +40,30 @@ def truemess(update):
         send = True
         upd=[name]
         create_entity(project_id, "2e0391b0-0acc-4667-b9a9-a805d942ae80", name, upd)
-        sleep(3.55)
+        # sleep(3.55)
         fulf = dialog(project_id, session_id, name)
-        return str("Збережено ім'я \n"+fulf)
+        return str("Збережено ім'я. || "+fulf)
     if send == False and what_ask == "Повторіть ім'я":
         send = True
         fulf = dialog(project_id, session_id, update)
-        return str("Не збережено ім'я\n"+fulf)
+        return str("Не збережено ім'я. || "+fulf)
+    
+
+    if send == True and what_ask == "Повторіть прізвище" and fulf == "Повторіть прізвище":
+        send = False
+        surname = update
+        return str("Такого прізвище немає, додати "+update+"?")
+    if what_ask == "Повторіть прізвище" and update.lower() == "так":
+        send = True
+        upd=[surname]
+        create_entity(project_id, "2f27753e-97d6-4d10-ad12-36e816d85392", surname, upd)
+        # sleep(3.55)
+        fulf = dialog(project_id, session_id, surname)
+        return str("Збережено прізвище. || "+fulf)
+    if send == False and what_ask == "Повторіть прізвище":
+        send = True
+        fulf = dialog(project_id, session_id, update)
+
 
     what_ask = fulf
     if fulf:
@@ -56,7 +73,7 @@ def truemess(update):
         if send==True:
             return str("result")
     # print("+="*10)
-             
+
 
 def trans(city,lan):
 
@@ -74,7 +91,6 @@ def trans(city,lan):
     
     print(u'Translation: {}'.format(translation['translatedText']))
     return translation['translatedText']
-
 
 def create_entity_type(project_id, display_name, kind):
     """Create an entity type with the given display name."""
