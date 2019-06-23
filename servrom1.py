@@ -18,9 +18,9 @@ project_id = 'small-talk-8f559'
 session_id = "BatlabAIBot"
 language_code = 'ru'
 
-def truemess(update):
+def truemess(update,language_code):
     print("update:",update)
-    response = detect_intent_texts(project_id, session_id, update, 'uk')
+    response = detect_intent_texts(project_id, session_id, update,language_code)
     firstName=response.query_result.parameters.fields["firstName"].string_value
     lastName=response.query_result.parameters.fields["lastName"].string_value
 

@@ -21,25 +21,33 @@ def parse(conn, addr):# обработка соединения в отдель�
         try:
             url=urllib.request.url2pathname(data.decode("utf-8"))
             disc=dict(urllib.parse.parse_qsl(url))
-            print("dict:"+disc['/?task']) 
             try:
-                datas = truemess(disc['/?task'])
+                lang = disc[' languageCode'][:2]
+                datas = truemess(disc['/?task'],lang)
                 b = "“”"
                 for char in b:
                     disc[' users'] = disc[' users'].replace(char,'"')
-                print(disc[' users'])
+                
                 dicc=ast.literal_eval(disc[' users'])
+                data = []
                 for it in dicc:
                     it = dict(it)
-                    for key, val in it.items():
-                        if it[key] == datas["firstName"]:
+                    if it["firstName"] == datas["firstName"]:
+                        data.append(it["id"])
+                if len(data) > 1:
+                    for it in dicc:
+                        it = dict(it)
+                        if it["lastName"] == datas["lastName"] and it["firstName"] == datas["firstName"]:
                             data = it["id"]
+                else:
+                    data = data[0]
             except Exception as err:
                 print('Ошибка:\n', traceback.format_exc())
                 print(err)
                 data = "Eror"
-            
-            data = data.encode('utf-8')
+            data = {'id':data}
+            data = json.dumps(data).encode('utf-8')
+            # data = data.encode('utf-8')
             # datas = json.dumps('{"id": 2, "name": "abc"}').encode('utf-8')
             conn.send(data)
         except:
