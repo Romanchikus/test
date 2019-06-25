@@ -19,17 +19,20 @@ session_id = "BatlabAIBot"
 language_code = 'ru'
 
 def truemess(update,language_code):
-    print("update:",update)
+    
     response = detect_intent_texts(project_id, session_id, update,language_code)
     firstName=response.query_result.parameters.fields["firstName"].string_value
     lastName=response.query_result.parameters.fields["lastName"].string_value
+    # date=response.query_result.parameters.fields["date"].string_value
 
     fulf=response.query_result.fulfillment_text
-    print("first:",firstName)
+    print("first:",firstName, "lastName:", lastName)
+    # print(response)
+    print("update:",update)
     if firstName or lastName:
-        return dict(firstName=firstName, lastName=lastName)
+        return dict(firstName=firstName, lastName=lastName, query = update)
     else:
-        return dict(firstName="error", lastName="error")
+        return dict(firstName="None", lastName="None",query = "None")
 
 
 def trans(city,lan):

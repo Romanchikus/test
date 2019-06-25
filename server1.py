@@ -9,7 +9,7 @@ import traceback
 from _thread import *
 import threading
 import ast
-port=10014
+port=10015
 
 def parse(conn, addr):# обработка соединения в отдельной функции
     
@@ -34,7 +34,12 @@ def parse(conn, addr):# обработка соединения в отдель�
                     it = dict(it)
                     if it["firstName"] == datas["firstName"]:
                         data.append(it["id"])
-                if len(data) > 1:
+                if len(data)== 0:
+                    for it in dicc:
+                        it = dict(it)
+                        if it["lastName"] == datas["lastName"]:
+                            data = it["id"]
+                elif len(data) > 1:
                     for it in dicc:
                         it = dict(it)
                         if it["lastName"] == datas["lastName"] and it["firstName"] == datas["firstName"]:
@@ -45,7 +50,7 @@ def parse(conn, addr):# обработка соединения в отдель�
                 print('Ошибка:\n', traceback.format_exc())
                 print(err)
                 data = "Eror"
-            data = {'id':data}
+            data = {'id':data, "query":  datas["query"]}
             data = json.dumps(data).encode('utf-8')
             # data = data.encode('utf-8')
             # datas = json.dumps('{"id": 2, "name": "abc"}').encode('utf-8')
