@@ -23,16 +23,20 @@ def truemess(update,language_code):
     response = detect_intent_texts(project_id, session_id, update,language_code)
     firstName=response.query_result.parameters.fields["firstName"].string_value
     lastName=response.query_result.parameters.fields["lastName"].string_value
+    date=response.query_result.parameters.fields["date"].string_value
+    time=response.query_result.parameters.fields["time"].string_value
+    until=response.query_result.parameters.fields["until"].string_value
+    dateuntil=response.query_result.parameters.fields["dateuntil"].string_value
     # date=response.query_result.parameters.fields["date"].string_value
 
     fulf=response.query_result.fulfillment_text
-    print("first:",firstName, "lastName:", lastName)
+    # print("first:",firstName, "lastName:", lastName)
     # print(response)
-    print("update:",update)
+    # print("date:",date)
     if firstName or lastName:
-        return dict(firstName=firstName, lastName=lastName, query = update)
+        return dict(firstName=firstName, lastName=lastName, query = update, date = date, time = time, until = until, dateuntil = dateuntil )
     else:
-        return dict(firstName="None", lastName="None",query = "None")
+        return dict(firstName="None", lastName="None",query = "None", date = "None", time = "None", until = "None", dateuntil = "None")
 
 
 def trans(city,lan):
