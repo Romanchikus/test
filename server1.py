@@ -13,7 +13,7 @@ port=10011
 # from datetime import datetime
 
 
-def parse(conn, addr):# обработка соединения в отдельной функции
+def parse(conn, addr):
     
     while True:
         data = b""
@@ -68,12 +68,13 @@ def parse(conn, addr):# обработка соединения в отдель�
             except:
                 # print('Ошибка:\n', traceback.format_exc())
                 pass
-            if not datas["time"] :
-                datas["time"] = datas["until"] +" "+datas["dateuntil"]
+            objectiveTimeAlias = datas["until"] +" "+datas["dateuntil"]
+            if objectiveTimeAlias == " ":
+                objectiveTimeAlias = "null"
+            if not datas["time"]:
+                datas["time"] = "null"
             else:
                 datas["time"] = datas["time"][11:19]
-            if datas["time"] == " ":
-                datas["time"] = "null"
             if not datas["firstName"]:
                 datas["firstName"] = "null"
             if not datas["lastName"]:
@@ -85,7 +86,7 @@ def parse(conn, addr):# обработка соединения в отдель�
             
 
 
-            data = {'id':data, "firstName":  datas["firstName"], "lastName":  datas["lastName"], "objective":  datas["query"], "objectiveDate":  datas["date"], "objectiveTime":  datas["time"] }
+            data = {'id':data, "firstName":  datas["firstName"], "lastName":  datas["lastName"], "objective":  datas["query"], "objectiveDate":  datas["date"], "objectiveTime":  datas["time"], "objectiveTimeAlias": objectiveTimeAlias }
             data = json.dumps(data).encode('utf-8')
             # data = data.encode('utf-8')
             # datas = json.dumps('{"id": 2, "name": "abc"}').encode('utf-8')
@@ -97,7 +98,7 @@ def parse(conn, addr):# обработка соединения в отдель�
 def Main(): 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind( ("localhost", port) )
-    print("socket binded to post", port) 
+    print("socket binded to post", port)
     sock.listen(1)
     try:
         while 1: # работаем постоянно

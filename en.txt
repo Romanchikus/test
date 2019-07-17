@@ -1,0 +1,22 @@
+
+Dmitry Sagaidachny should come tomorrow to the robot at 9 am
+{'id': [], 'firstName': 'Dmitry', 'lastName': 'Sagaidachny', 'objective': 'Dmitry Sagaidachny should come tomorrow to the robot at 9 am', 'objectiveDate': '2019-07-07', 'objectiveTime': '09:00:00', 'objectiveTimeAlias': 'null'}
+
+Katya Sagaidachny should make a list of those present until next week.
+{'id': [], 'firstName': 'Katya', 'lastName': 'Sagaidachny', 'objective': 'Katya Sagaidachny should make a list of those present until next week.', 'objectiveDate': 'null', 'objectiveTime': 'null', 'objectiveTimeAlias': 'next of the week'}
+
+Viktor Obyednyak let him go buy the table in the store next quarter
+{'id': [], 'firstName': 'Viktor', 'lastName': 'Obyednyak', 'objective': 'Viktor Obyednyak let him go buy the table in the store next quarter', 'objectiveDate': 'null', 'objectiveTime': 'null', 'objectiveTimeAlias': 'next of the quarter'}
+
+Smith Johnson should find information about our company on the City Council site until the evening
+{'id': '6', 'firstName': 'Smith', 'lastName': 'Johnson', 'objective': 'Smith Johnson should find information about our company on the City Council site until the evening', 'objectiveDate': 'null', 'objectiveTime': 'null', 'objectiveTimeAlias': 'the of the evening'}
+
+May Vova Johnson come to visit me on October 23 at 7 pm
+{'id': '6', 'firstName': 'Vova', 'lastName': 'Johnson', 'objective': 'May Vova Johnson come to visit me on October 23 at 7 pm', 'objectiveDate': '2019-10-23', 'objectiveTime': '19:00:00', 'objectiveTimeAlias': 'null'}
+
+
+Stas Sidorchuk clean things at five in the evening of the sixth of May
+{'id': [], 'firstName': 'Stas', 'lastName': 'Sidorchuk', 'objective': 'Stas Sidorchuk clean things at five in the evening of the sixth of May', 'objectiveDate': '2020-05-06', 'objectiveTime': '17:00:00', 'objectiveTimeAlias': 'null'}
+
+
+
